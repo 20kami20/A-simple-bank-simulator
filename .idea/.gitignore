@@ -1,0 +1,71 @@
+# Ignore compiled class files
+*.class
+
+# Ignore package files
+*.jar
+*.war
+*.ear
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse specific files
+.project
+.classpath
+.settings/
+bin/
+
+# Maven specific files
+target/
+!src/main/resources/
+!src/test/resources/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle specific files
+.gradle/
+build/
+.gradle-cache/
+*.gradle
+
+# Logs
+*.log
+
+# Database-related files
+*.db
+*.sql
+*.sqlite
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+*.env
+
+# User specific files
+*.swp
+*.swo
+*.bak
+
+# Ignore IDE specific files
+.vscode/
+
+# Backup files
+*.~*
+
+# Git specific
+*.orig
