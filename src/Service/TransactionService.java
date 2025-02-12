@@ -24,7 +24,7 @@ public class TransactionService implements ITransactionService {
             statement.setInt(1, userId);
             statement.setDouble(2, amount);
 
-            System.out.println("Executing SQL: " + statement.toString());  // <-- Добавьте эту строку
+            System.out.println("Executing SQL: " + statement.toString());  
 
             int rowsAffected = statement.executeUpdate();
 
@@ -110,7 +110,7 @@ public class TransactionService implements ITransactionService {
             insertTransferStmt.setInt(2, receiverId);
             insertTransferStmt.setDouble(3, amount);
 
-            System.out.println("Executing SQL: " + insertTransferStmt.toString());  // Лог запроса
+            System.out.println("Executing SQL: " + insertTransferStmt.toString());  
             int rowsAffected = insertTransferStmt.executeUpdate();
 
             if (rowsAffected > 0) {
