@@ -15,7 +15,7 @@ public class TransactionService implements ITransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    // Депозит
+    
     @Override
     public void depositMoney(int userId, double amount) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -39,7 +39,7 @@ public class TransactionService implements ITransactionService {
     }
 
 
-    // Снятие средств
+    
     @Override
     public void withdrawMoney(int userId, double amount) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -66,13 +66,13 @@ public class TransactionService implements ITransactionService {
     }
 
 
-    // Перевод средств
+    
     @Override
     public boolean transferMoney(int senderId, int receiverId, double amount) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-            connection.setAutoCommit(false); // Начинаем транзакцию
+            connection.setAutoCommit(false); 
 
-            // Проверка баланса отправителя
+            
             String checkBalanceSql = "SELECT balance FROM users WHERE id = ?";
             PreparedStatement checkBalanceStmt = connection.prepareStatement(checkBalanceSql);
             checkBalanceStmt.setInt(1, senderId);
@@ -82,11 +82,11 @@ public class TransactionService implements ITransactionService {
                 double senderBalance = resultSet.getDouble("balance");
                 if (senderBalance < amount) {
                     System.out.println("Insufficient funds.");
-                    return false; // Недостаточно средств
+                    return false; 
                 }
             } else {
                 System.out.println("Sender not found.");
-                return false; // Отправитель не найден
+                return false; 
             }
 
             // Списываем средства с отправителя
@@ -96,14 +96,14 @@ public class TransactionService implements ITransactionService {
             deductStmt.setInt(2, senderId);
             deductStmt.executeUpdate();
 
-            // Добавляем средства получателю
+            
             String addSql = "UPDATE users SET balance = balance + ? WHERE id = ?";
             PreparedStatement addStmt = connection.prepareStatement(addSql);
             addStmt.setDouble(1, amount);
             addStmt.setInt(2, receiverId);
             addStmt.executeUpdate();
 
-            // Записываем транзакцию в таблицу transactions_transfer
+            
             String insertTransferSql = "INSERT INTO transactions_transfer (sender_id, receiver_id, amount, transaction_date) VALUES (?, ?, ?, NOW())";
             PreparedStatement insertTransferStmt = connection.prepareStatement(insertTransferSql);
             insertTransferStmt.setInt(1, senderId);
@@ -119,7 +119,7 @@ public class TransactionService implements ITransactionService {
                 System.out.println("Transfer failed!");
             }
 
-            connection.commit();  // Фиксируем изменения в БД
+            connection.commit();  
             return true;
         } catch (SQLException e) {
             System.out.println("Error during transfer: " + e.getMessage());
@@ -128,14 +128,14 @@ public class TransactionService implements ITransactionService {
     }
 
 
-    // История транзакций
+    
     @Override
     public void getTransactionHistory(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-            // Отладочное сообщение: начало метода
+            
             System.out.println("Fetching transaction history for user ID: " + userId);
 
-            // SQL-запрос для объединения истории транзакций
+            
             String sql = "SELECT " +
                     "    t.id AS transaction_id, " +
                     "    t.amount, " +
@@ -171,14 +171,14 @@ public class TransactionService implements ITransactionService {
             statement.setInt(2, userId);
             statement.setInt(3, userId);
 
-            // Отладочное сообщение: SQL-запрос выполнен
+            
             System.out.println("SQL executed, fetching results...");
 
             ResultSet rs = statement.executeQuery();
 
             System.out.println("Transaction History:");
             while (rs.next()) {
-                System.out.println("Processing ResultSet row..."); // Отладка
+                System.out.println("Processing ResultSet row..."); 
                 int transactionId = rs.getInt("transaction_id");
                 double amount = rs.getDouble("amount");
                 Timestamp transactionDate = rs.getTimestamp("transaction_date");
