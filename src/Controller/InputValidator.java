@@ -35,7 +35,7 @@ public class InputValidator {
 
 
 
-    public User handleLogin() {
+   public User handleLogin() {
         System.out.println("\n=== Login ===");
 
         String username = getValidString(
@@ -58,6 +58,7 @@ public class InputValidator {
             return null;
         }
     }
+
 
 
     
