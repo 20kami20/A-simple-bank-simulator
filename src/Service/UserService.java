@@ -95,26 +95,23 @@ public class UserService implements IUserService {
         }
     }
 
-    public double getBalance(int userId) {
-        double balance = 0.0;
-        try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-            String sql = "SELECT balance FROM users WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
+   public double getBalance(int userId) {
+    double balance = 0;
+    try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+        String sql = "SELECT balance FROM users WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, userId);
+        ResultSet rs = statement.executeQuery();
 
-            if (resultSet.next()) {
-                balance = resultSet.getDouble("balance");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            balance = rs.getDouble("balance");
         }
-        return balance;
+    } catch (SQLException e) {
+        System.out.println("Error fetching balance: " + e.getMessage());
     }
+    return balance;
+}
 
-    // Получение информации о пользователе
-    // UserService.java
-    // UserService.java
     public void getUserInfo(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
             String sql = "SELECT first_name, last_name, email, gender, phone_number, balance FROM users WHERE id = ?";
@@ -128,16 +125,16 @@ public class UserService implements IUserService {
                 String lastName = rs.getString("last_name");
                 String email = rs.getString("email");
                 String gender = rs.getString("gender");
-                String phoneNumber = rs.getString("phone_number");  // Получаем номер телефона
+                String phoneNumber = rs.getString("phone_number"); 
                 double balance = rs.getDouble("balance");
 
-                // Выводим информацию о пользователе, включая его ID и номер телефона
+                
                 System.out.println("\n=== User Info ===");
-                System.out.println("User ID: " + userId);  // Выводим ID пользователя
+                System.out.println("User ID: " + userId);  
                 System.out.println("First Name: " + firstName);
                 System.out.println("Last Name: " + lastName);
                 System.out.println("Email: " + email);
-                System.out.println("Phone Number: " + phoneNumber);  // Выводим номер телефона
+                System.out.println("Phone Number: " + phoneNumber);  
                 System.out.println("Gender: " + gender);
                 System.out.println("Balance: " + balance);
             } else {
@@ -190,7 +187,7 @@ public class UserService implements IUserService {
             statement.setInt(6, userId);
             int rowsAffected = statement.executeUpdate();
 
-            return rowsAffected > 0;  // Возвращаем true, если изменения были успешными
+            return rowsAffected > 0;  
         } catch (SQLException e) {
             System.out.println("Error updating user details: " + e.getMessage());
             return false;
