@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class AdminService implements IAdminService {
 
-    // Блокировка аккаунта пользователя
+    
     @Override
     public void blockAccount(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -22,7 +22,7 @@ public class AdminService implements IAdminService {
         }
     }
 
-    // Разблокировка аккаунта пользователя
+    
     @Override
     public void unblockAccount(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -36,7 +36,7 @@ public class AdminService implements IAdminService {
         }
     }
 
-    // Удаление пользователя
+    
     @Override
     public void deleteUser(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -50,7 +50,7 @@ public class AdminService implements IAdminService {
         }
     }
 
-    // Просмотр всех пользователей
+    
     @Override
     public void viewAllUsers() {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
@@ -71,22 +71,22 @@ public class AdminService implements IAdminService {
         }
     }
 
-    // Поиск пользователя по ID или имени пользователя
+    
     @Override
     public void searchUserByIdOrUsername(String input) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
             String sql;
             PreparedStatement statement;
 
-            // Проверка, является ли входное значение числом
-            if (input.matches("[0-9]+")) {  // Если это число
+            
+            if (input.matches("[0-9]+")) {  
                 sql = "SELECT id, username, balance, is_blocked FROM users WHERE id = ?";
                 statement = connection.prepareStatement(sql);
-                statement.setInt(1, Integer.parseInt(input));  // Преобразуем строку в число
+                statement.setInt(1, Integer.parseInt(input));  
             } else {  // Если это строка (username)
                 sql = "SELECT id, username, balance, is_blocked FROM users WHERE username = ?";
                 statement = connection.prepareStatement(sql);
-                statement.setString(1, input);  // Передаем строку
+                statement.setString(1, input); 
             }
 
             ResultSet rs = statement.executeQuery();
