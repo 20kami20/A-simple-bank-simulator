@@ -60,7 +60,7 @@ public class InputValidator {
     }
 
 
-    // Регистрация пользователя
+    
     public void handleRegistration() {
         System.out.println("\n=== Registration ===");
 
