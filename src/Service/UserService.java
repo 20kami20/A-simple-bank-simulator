@@ -95,22 +95,23 @@ public class UserService implements IUserService {
         }
     }
 
-   public double getBalance(int userId) {
-    double balance = 0;
-    try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-        String sql = "SELECT balance FROM users WHERE id = ?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, userId);
-        ResultSet rs = statement.executeQuery();
+    public double getBalance(int userId) {
+        double balance = 0;
+        try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+            String sql = "SELECT balance FROM users WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
 
-        if (rs.next()) {
-            balance = rs.getDouble("balance");
+            if (rs.next()) {
+                balance = rs.getDouble("balance");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching balance: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.out.println("Error fetching balance: " + e.getMessage());
+        return balance;
     }
-    return balance;
-}
+
 
     public void getUserInfo(int userId) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
