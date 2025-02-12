@@ -50,7 +50,7 @@ public class TransactionService implements ITransactionService {
             statement.setString(2, "WITHDRAWAL");
             statement.setDouble(3, amount);
 
-            System.out.println("Executing SQL: " + statement.toString());  // Лог запроса
+            System.out.println("Executing SQL: " + statement.toString());  
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -59,7 +59,7 @@ public class TransactionService implements ITransactionService {
                 System.out.println("Withdrawal failed!");
             }
 
-            connection.commit();  // Фиксируем изменения в БД
+            connection.commit();  
         } catch (SQLException e) {
             System.out.println("Error during withdrawal: " + e.getMessage());
         }
@@ -89,7 +89,7 @@ public class TransactionService implements ITransactionService {
                 return false; 
             }
 
-            // Списываем средства с отправителя
+        
             String deductSql = "UPDATE users SET balance = balance - ? WHERE id = ?";
             PreparedStatement deductStmt = connection.prepareStatement(deductSql);
             deductStmt.setDouble(1, amount);
