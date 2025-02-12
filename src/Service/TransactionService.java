@@ -17,26 +17,36 @@ public class TransactionService implements ITransactionService {
 
     
     @Override
-    public void depositMoney(int userId, double amount) {
-        try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-            String sql = "INSERT INTO transactions (user_id, type, amount, transaction_date) VALUES (?, 'DEPOSIT', ?, NOW())";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, userId);
-            statement.setDouble(2, amount);
+   public void depositMoney(int userId, double amount) {
+    try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+        connection.setAutoCommit(false);
 
-            System.out.println("Executing SQL: " + statement.toString());  
+        String updateBalanceSql = "UPDATE users SET balance = balance + ? WHERE id = ?";
+        PreparedStatement updateBalanceStmt = connection.prepareStatement(updateBalanceSql);
+        updateBalanceStmt.setDouble(1, amount);
+        updateBalanceStmt.setInt(2, userId);
+        updateBalanceStmt.executeUpdate();
 
-            int rowsAffected = statement.executeUpdate();
+        String sql = "INSERT INTO transactions (user_id, type, amount, transaction_date) VALUES (?, ?, ?, NOW())";
+        PreparedStatement statement = connection.prepareStatement(sql);
 
-            if (rowsAffected > 0) {
-                System.out.println("Deposit successful!");
-            } else {
-                System.out.println("Deposit failed!");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error during deposit: " + e.getMessage());
+        statement.setInt(1, userId);
+        statement.setString(2, "DEPOSIT");
+        statement.setDouble(3, amount);
+
+        int rowsAffected = statement.executeUpdate();
+
+        if (rowsAffected > 0) {
+            System.out.println("Deposit successful!");
+        } else {
+            System.out.println("Deposit failed!");
         }
+
+        connection.commit();
+    } catch (SQLException e) {
+        System.out.println("Error during deposit: " + e.getMessage());
     }
+}
 
 
     
