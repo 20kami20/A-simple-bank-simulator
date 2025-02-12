@@ -45,13 +45,13 @@ public class TransactionController {
         return amount;
     }
 
-    // Вывод
+
     public void withdrawMoney(int userId) {
         double amount = getValidAmount("Enter amount to withdraw: ");
         transactionService.withdrawMoney(userId, amount);
     }
 
-    // Перевод средств
+    
     public void transferMoney(int senderId) {
         int receiverId = getValidUserId("Enter recipient's user ID: ");
         double amount = getValidAmount("Enter amount to transfer: ");
