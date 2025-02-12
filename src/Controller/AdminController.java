@@ -52,7 +52,7 @@ public class AdminController implements IAdminController {
 
                 case 6:
                     System.out.println("Logged out.");
-                    return;  // Выход из меню администратора
+                    return; 
 
                 default:
                     System.out.println("Invalid choice! Please select 1-6.");
