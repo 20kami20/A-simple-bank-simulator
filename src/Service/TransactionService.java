@@ -16,43 +16,67 @@ public class TransactionService implements ITransactionService {
     }
 
     
-    @Override
-   public void depositMoney(int userId, double amount) {
-    try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
-        connection.setAutoCommit(false);
+  @Override
+    public void depositMoney(int userId, double amount) {
+        try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+            connection.setAutoCommit(false);
 
-        String updateBalanceSql = "UPDATE users SET balance = balance + ? WHERE id = ?";
-        PreparedStatement updateBalanceStmt = connection.prepareStatement(updateBalanceSql);
-        updateBalanceStmt.setDouble(1, amount);
-        updateBalanceStmt.setInt(2, userId);
-        updateBalanceStmt.executeUpdate();
+            String updateBalanceSql = "UPDATE users SET balance = balance + ? WHERE id = ?";
+            PreparedStatement updateBalanceStmt = connection.prepareStatement(updateBalanceSql);
+            updateBalanceStmt.setDouble(1, amount);
+            updateBalanceStmt.setInt(2, userId);
+            updateBalanceStmt.executeUpdate();
 
-        String sql = "INSERT INTO transactions (user_id, type, amount, transaction_date) VALUES (?, ?, ?, NOW())";
-        PreparedStatement statement = connection.prepareStatement(sql);
+            String sql = "INSERT INTO transactions (user_id, type, amount, transaction_date) VALUES (?, ?, ?, NOW())";
+            PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setInt(1, userId);
-        statement.setString(2, "DEPOSIT");
-        statement.setDouble(3, amount);
+            statement.setInt(1, userId);
+            statement.setString(2, "DEPOSIT");
+            statement.setDouble(3, amount);
 
-        int rowsAffected = statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
-        if (rowsAffected > 0) {
-            System.out.println("Deposit successful!");
-        } else {
-            System.out.println("Deposit failed!");
+            if (rowsAffected > 0) {
+                System.out.println("Deposit successful!");
+            } else {
+                System.out.println("Deposit failed!");
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            System.out.println("Error during deposit: " + e.getMessage());
         }
-
-        connection.commit();
-    } catch (SQLException e) {
-        System.out.println("Error during deposit: " + e.getMessage());
     }
-}
 
 
     
     @Override
     public void withdrawMoney(int userId, double amount) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+            connection.setAutoCommit(false);
+
+            String checkBalanceSql = "SELECT balance FROM users WHERE id = ?";
+            PreparedStatement checkBalanceStmt = connection.prepareStatement(checkBalanceSql);
+            checkBalanceStmt.setInt(1, userId);
+            ResultSet resultSet = checkBalanceStmt.executeQuery();
+
+            if (resultSet.next()) {
+                double currentBalance = resultSet.getDouble("balance");
+                if (currentBalance < amount) {
+                    System.out.println("Insufficient funds. Withdrawal failed!");
+                    return;
+                }
+            } else {
+                System.out.println("User not found!");
+                return;
+            }
+
+            String updateBalanceSql = "UPDATE users SET balance = balance - ? WHERE id = ?";
+            PreparedStatement updateBalanceStmt = connection.prepareStatement(updateBalanceSql);
+            updateBalanceStmt.setDouble(1, amount);
+            updateBalanceStmt.setInt(2, userId);
+            updateBalanceStmt.executeUpdate();
+
             String sql = "INSERT INTO transactions (user_id, type, amount, transaction_date) VALUES (?, ?, ?, NOW())";
             PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -60,7 +84,6 @@ public class TransactionService implements ITransactionService {
             statement.setString(2, "WITHDRAWAL");
             statement.setDouble(3, amount);
 
-            System.out.println("Executing SQL: " + statement.toString());  
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -69,7 +92,7 @@ public class TransactionService implements ITransactionService {
                 System.out.println("Withdrawal failed!");
             }
 
-            connection.commit();  
+            connection.commit();
         } catch (SQLException e) {
             System.out.println("Error during withdrawal: " + e.getMessage());
         }
