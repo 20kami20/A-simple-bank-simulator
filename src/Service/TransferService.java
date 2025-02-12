@@ -10,7 +10,7 @@ public class TransferService {
 
     public static final Scanner scanner = new Scanner(System.in);
 
-    // Метод для перевода между пользователями
+
     public static void initiateTransfer(int senderId) {
         int receiverId = getReceiverId();
 
@@ -19,16 +19,13 @@ public class TransferService {
             return;
         }
 
-        // Проверка суммы перевода
         double transferAmount = getAmount("Enter amount to transfer: ");
 
-        // Логика перевода
         if (transferMoney(senderId, receiverId, transferAmount)) {
             System.out.println("Transferred " + transferAmount + " from User " + senderId + " to User " + receiverId);
         }
     }
 
-    // Метод для получения ID получателя с проверкой на цифры
     private static int getReceiverId() {
         int receiverId = -1;
         while (true) {
@@ -46,14 +43,12 @@ public class TransferService {
         return receiverId;
     }
 
-    // Метод для получения и проверки суммы перевода
     private static double getAmount(String prompt) {
         double amount = -1;
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine();
 
-            // Проверка, что введена только положительная сумма
             if (input.matches("\\d+(\\.\\d+)?") && Double.parseDouble(input) > 0) {
                 amount = Double.parseDouble(input);
                 break;
@@ -64,7 +59,6 @@ public class TransferService {
         return amount;
     }
 
-    // Метод для выполнения перевода в базе данных
     private static boolean transferMoney(int senderId, int receiverId, double amount) {
         try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
             String sql = "CALL transfer_money(?, ?, ?)";
