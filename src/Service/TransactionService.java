@@ -159,6 +159,76 @@ public class TransactionService implements ITransactionService {
             return false;
         }
     }
+    @Override
+    public void getTransactionHistory(int userId) {
+        try (Connection connection = DatabaseConnection.getInstance().getConnection()) {
+            
+            System.out.println("Fetching transaction history for user ID: " + userId);
+
+            
+            String sql = "SELECT " +
+                    "    t.id AS transaction_id, " +
+                    "    t.amount, " +
+                    "    t.transaction_date, " +
+                    "    'deposit/withdraw' AS transaction_type, " +
+                    "    t.type, " +
+                    "    null AS sender_id, " +
+                    "    null AS receiver_id " +
+                    "FROM " +
+                    "    public.transactions t " +
+                    "WHERE " +
+                    "    t.user_id = ? " +
+
+                    "UNION ALL " +
+
+                    "SELECT " +
+                    "    tt.id AS transaction_id, " +
+                    "    tt.amount, " +
+                    "    tt.transaction_date, " +
+                    "    'transfer' AS transaction_type, " +
+                    "    'Transfer between users' AS type, " +
+                    "    tt.sender_id, " +
+                    "    tt.receiver_id " +
+                    "FROM " +
+                    "    public.transactions_transfer tt " +
+                    "WHERE " +
+                    "    tt.sender_id = ? OR tt.receiver_id = ? " +
+                    "ORDER BY " +
+                    "    transaction_date DESC";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            statement.setInt(2, userId);
+            statement.setInt(3, userId);
+
+            
+            System.out.println("SQL executed, fetching results...");
+
+            ResultSet rs = statement.executeQuery();
+
+            System.out.println("Transaction History:");
+            while (rs.next()) {
+                System.out.println("Processing ResultSet row..."); 
+                int transactionId = rs.getInt("transaction_id");
+                double amount = rs.getDouble("amount");
+                Timestamp transactionDate = rs.getTimestamp("transaction_date");
+                String transactionType = rs.getString("transaction_type");
+                String type = rs.getString("type");
+                Integer senderId = rs.getObject("sender_id") != null ? rs.getInt("sender_id") : null;
+                Integer receiverId = rs.getObject("receiver_id") != null ? rs.getInt("receiver_id") : null;
+
+                System.out.print("Transaction ID: " + transactionId + ", Amount: " + amount +
+                        ", Type: " + transactionType + ", Date: " + transactionDate);
+                if ("transfer".equals(transactionType)) {
+                    System.out.print(", Sender ID: " + senderId + ", Receiver ID: " + receiverId);
+                }
+                System.out.println();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching transaction history: " + e.getMessage());
+        }
+    }
 
 
     
