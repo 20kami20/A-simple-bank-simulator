@@ -83,37 +83,7 @@ public class AdminController implements IAdminController {
     }
 
 
-    @Override
-    public void deleteUser() {
-        int userId = getValidUserId("Enter user ID to delete: ");
-        adminService.deleteUser(userId);
-    }
-
-
-    private int getValidUserId(String prompt) {
-        int userId = -1;
-        while (true) {
-            try {
-                System.out.print(prompt);
-                String input = scanner.nextLine().trim();
-
-
-                if (input.matches("[0-9]+")) {
-                    userId = Integer.parseInt(input);
-                    if (userId > 0) {
-                        break;
-                    } else {
-                        System.out.println("User ID must be a positive integer. Please try again.");
-                    }
-                } else {
-                    System.out.println("Invalid input! Please enter a numeric value for user ID.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a valid numeric value.");
-            }
-        }
-        return userId;
-    }
+   
 
 
     private int getValidMenuChoice(int min, int max) {
