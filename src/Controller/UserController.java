@@ -11,6 +11,8 @@ public class UserController implements IUserController {
     private final UserService userService;
     private final Scanner scanner;
 
+
+
     public UserController(UserService userService) {
         this.userService = userService;
         this.scanner = new Scanner(System.in);
@@ -41,6 +43,7 @@ public class UserController implements IUserController {
         } else {
             System.out.println("Invalid credentials. Please try again.");
         }
+
     }
 
     @Override
