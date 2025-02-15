@@ -26,7 +26,7 @@ public class TransactionController {
                 System.out.print(prompt);
                 String input = scanner.nextLine().trim();
 
-                // Проверка, что введена только цифра
+
                 if (!input.matches("[0-9]*\\.?[0-9]+")) {
                     System.out.println("Invalid input! Please enter a numeric value.");
                     continue;
